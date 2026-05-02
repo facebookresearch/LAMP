@@ -1,0 +1,418 @@
+<!-- Copyright (c) Meta Platforms, Inc. and affiliates.
+This source code is licensed under the CC BY-NC 4.0 license found in the
+LICENSE file in the root directory of this source tree. -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="LAMP: Localization Aware Multi-camera People Tracking in Metric 3D World">
+  <meta name="keywords" content="LAMP, 3D human motion tracking, egocentric, multi-camera, SMPL">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-913VYKD95Q"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-913VYKD95Q');
+  </script>
+
+  <title>💡 LAMP</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <style>
+    :root {
+      --bg: #0a0a18;
+      --text: #e0e0e0;
+      --text-muted: #ccc;
+      --text-author: #bbb;
+      --link: hsl(204, 86%, 65%);
+      --bibtex-bg: #16213e;
+      --bibtex-text: #ccc;
+      --footer-bg: #16213e;
+      --footer-text: #888;
+      --carousel-nav-bg: rgba(255, 255, 255, 0.15);
+      --carousel-indicator-bg: rgba(255, 255, 255, 0.3);
+      --carousel-indicator-active: #e0e0e0;
+      --method-img-bg: #f5f5f5;
+      --toggle-bg: rgba(255, 255, 255, 0.1);
+      --toggle-border: rgba(255, 255, 255, 0.25);
+    }
+
+    [data-theme="light"] {
+      --bg: #eef2f7;
+      --text: #1a1a1a;
+      --text-muted: #444;
+      --text-author: #555;
+      --link: hsl(204, 70%, 45%);
+      --bibtex-bg: #dde4ed;
+      --bibtex-text: #333;
+      --footer-bg: #dde4ed;
+      --footer-text: #666;
+      --carousel-nav-bg: rgba(0, 0, 0, 0.1);
+      --carousel-indicator-bg: rgba(0, 0, 0, 0.25);
+      --carousel-indicator-active: #1a1a1a;
+      --method-img-bg: #ffffff;
+      --toggle-bg: rgba(0, 0, 0, 0.06);
+      --toggle-border: rgba(0, 0, 0, 0.15);
+    }
+
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    .hero, .section, .footer {
+      background-color: var(--bg);
+    }
+
+    .title, .subtitle, h1, h2, h3, strong {
+      color: var(--text) !important;
+    }
+
+    .publication-title {
+      font-family: 'Google Sans', sans-serif;
+    }
+
+    .publication-authors {
+      font-family: 'Google Sans', sans-serif;
+      color: var(--text-author);
+    }
+
+    .publication-authors a {
+      color: var(--link) !important;
+      text-decoration: none;
+    }
+
+    .publication-authors a:hover {
+      text-decoration: underline;
+    }
+
+    .publication-links .button {
+      font-family: 'Google Sans', sans-serif;
+    }
+
+    section {
+      padding: 1.5rem 1.5rem;
+    }
+
+    .hero-body {
+      padding-top: 0.5rem;
+      padding-bottom: 0;
+    }
+
+    .section {
+      padding: 2rem 1.5rem;
+    }
+
+    .content p, .content li {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+    }
+
+    .content a {
+      color: var(--link);
+    }
+
+    .teaser-img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+
+    .method-img {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .method-img-wrapper {
+      background: var(--method-img-bg);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .videobox {
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .videobox video {
+      width: 100%;
+      display: block;
+    }
+
+    #BibTeX pre {
+      padding: 1.25rem;
+      font-size: 0.85rem;
+      background: var(--bibtex-bg);
+      color: var(--bibtex-text);
+    }
+
+    .results-carousel {
+      overflow: hidden;
+    }
+
+    .results-carousel .item {
+      padding-bottom: 40px;
+    }
+
+    .results-carousel .item video {
+      width: 100%;
+      border-radius: 12px;
+    }
+
+    .carousel .carousel-navigation .carousel-nav-left,
+    .carousel .carousel-navigation .carousel-nav-right {
+      background-color: var(--carousel-nav-bg);
+      border: none;
+      color: var(--text);
+    }
+
+    .carousel .carousel-container .carousel-indicator .indicator-item .indicator-style {
+      background-color: var(--carousel-indicator-bg);
+    }
+
+    .carousel .carousel-container .carousel-indicator .indicator-item.is-active .indicator-style {
+      background-color: var(--carousel-indicator-active);
+    }
+
+    footer.footer {
+      padding: 2rem 1.5rem;
+      background-color: var(--footer-bg) !important;
+    }
+
+    footer p, footer a {
+      color: var(--footer-text) !important;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1000;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      border: 1px solid var(--toggle-border);
+      background: var(--toggle-bg);
+      color: var(--text);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.08);
+    }
+  </style>
+</head>
+<body>
+
+<button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">
+  <i class="fas fa-lightbulb"></i>
+</button>
+
+<!-- Hero / Header -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-2 publication-title">
+            💡 <strong>LAMP</strong>:
+            Localization Aware Multi-camera People Tracking in Metric 3D World
+          </h1>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><a href="https://nan-yang.me/" target="_blank">Nan Yang</a>,&nbsp;</span>
+            <span class="author-block"><a href="https://jstraub.github.io/" target="_blank">Julian Straub</a>,&nbsp;</span>
+            <span class="author-block"><a>Fan Zhang</a>,&nbsp;</span>
+            <span class="author-block"><a href="https://rapiderobot.bitbucket.io/" target="_blank">Richard Newcombe</a>,&nbsp;</span>
+            <span class="author-block"><a href="https://jakobengel.github.io/" target="_blank">Jakob Engel</a>,&nbsp;</span>
+            <span class="author-block"><a href="https://scholar.google.com/citations?user=eUAgpwkAAAAJ&hl=en" target="_blank">Lingni Ma</a></span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><em>Meta Reality Labs Research</em></span>
+          </div>
+
+          <h2 class="is-size-5" style="font-weight: normal; margin-top: 0.25rem;">CVPR 2026</h2>
+
+          <!-- Links -->
+          <div class="column has-text-centered">
+            <div class="publication-links" style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2605.05390" class="external-link button is-normal is-rounded is-dark" target="_blank">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://youtu.be/pJv1xJ-ssUQ" class="external-link button is-normal is-rounded is-dark" target="_blank">
+                  <span class="icon"><i class="fab fa-youtube"></i></span>
+                  <span>Video</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/facebookresearch/LAMP" class="external-link button is-normal is-rounded is-dark" target="_blank">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code</span>
+                </a>
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Video Carousel -->
+<section class="hero is-small has-text-centered" style="padding-top: 0;">
+  <div class="hero-body" style="padding-top: 0;">
+    <div class="container is-max-desktop">
+      <h2 class="is-size-6" style="font-weight: normal; margin-bottom: 1rem;">Real-time Demos Running on <a href="https://www.projectaria.com/" target="_blank" style="color: hsl(204, 86%, 65%) !important;">Aria Gen2</a> Devices</h2>
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item">
+          <video autoplay controls muted loop playsinline height="100%">
+            <source src="resources/videos/scene1_cafe.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item">
+          <video preload="auto" controls muted loop playsinline height="100%">
+            <source src="resources/videos/scene2_appt.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item">
+          <video preload="auto" controls muted loop playsinline height="100%">
+            <source src="resources/videos/scene3_lib.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Abstract -->
+<section class="section hero">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Tracking 3D human motion from egocentric multi-camera headset is challenged by severe egomotion, partial visibility or occlusions and lack of training data. Existing methods designed for monocular video often require static or slowly-moving cameras and cannot efficiently leverage multi-view, calibrated and localized input. This makes them brittle and prone to fail on dynamic egocentric captures. We propose LAMP (Localization Aware Multi-camera People Tracking): a novel, simple framework to solve this via early disentanglement of observer and target motion. LAMP introduces a two-step process. First, we leverage the known device 6 DoF motion and calibration to convert detected 2D body keypoints from all cameras over a temporal window into a unified 3D world reference frame. Second, an end-to-end trained spatio-temporal transformer fits 3D human motion directly to this 3D ray cloud. This "lift-then-fit" approach allows LAMP to learn and leverage a natural human motion prior in the world-space, as well as providing an elegant framework to flexibly incorporate information from multiple temporally asynchronous, partially observing and moving cameras. LAMP achieves state-of-the-art results on monocular benchmarks, while significantly outperforming baselines for our targeted egocentric setting.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Method Overview -->
+<section class="section hero">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Method Overview</h2>
+        <div class="content has-text-justified">
+          <div class="method-img-wrapper">
+            <img src="resources/imgs/lamp_method.png" width="100%" style="height:auto;" alt="LAMP method overview">
+          </div>
+          <p>
+            LAMP employs an <em>early world-space ray lifting</em> paradigm to track multiple people over time from a multi-camera headset. Starting from individual images, the method detects 2D bounding boxes and keypoints per person, associates them across cameras and time, then back-projects the 2D keypoints into posed 3D rays using the known camera calibration and 6-DoF device poses. The resulting spatio-temporal ray cloud is processed by <strong>LAMP-Net</strong>, a spatio-temporal transformer that outputs SMPL body motion parameters for each tracked person at each timestamp.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BibTeX -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@inproceedings{yang2026lamp,
+  title     = {{LAMP}: Localization Aware Multi-camera People Tracking in Metric {3D} World},
+  author    = {Yang, Nan and Straub, Julian and Zhang, Fan and Newcombe, Richard and Engel, Jakob and Ma, Lingni},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2026}
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>
+            Content © 2026 Meta Platforms, Inc · Template adapted from <a href="https://nerfies.github.io" target="_blank">Nerfies</a>.
+          </p>
+          <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 0.5rem;">
+            <a href="https://opensource.facebook.com/legal/privacy/" target="_blank" rel="noreferrer noopener">Privacy</a>
+            &nbsp;·&nbsp;
+            <a href="https://opensource.facebook.com/legal/terms/" target="_blank" rel="noreferrer noopener">Terms</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/js/bulma-carousel.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  bulmaCarousel.attach('#results-carousel', {
+    slidesToScroll: 1,
+    slidesToShow: 1,
+    loop: true,
+    autoplay: false,
+    navigation: true,
+    navigationKeys: true,
+    pagination: true,
+  });
+
+  const root = document.documentElement;
+  const toggle = document.getElementById('theme-toggle');
+  const icon = toggle.querySelector('i');
+
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      root.setAttribute('data-theme', 'light');
+      icon.className = 'far fa-lightbulb';
+    } else {
+      root.removeAttribute('data-theme');
+      icon.className = 'fas fa-lightbulb';
+    }
+  }
+
+  applyTheme(localStorage.getItem('theme') || 'dark');
+
+  toggle.addEventListener('click', function() {
+    const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    localStorage.setItem('theme', next);
+    applyTheme(next);
+  });
+});
+</script>
+
+</body>
+</html>

@@ -67,7 +67,7 @@ else
 fi
 
 echo "[install] step 1: create/refresh venv"
-uv venv "$VENV_DIR" --python 3.12
+uv venv --seed "$VENV_DIR" --python 3.12
 source "$VENV_DIR/bin/activate"
 python -m pip --version | sed 's/^/[install] /'
 

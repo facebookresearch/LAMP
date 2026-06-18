@@ -131,7 +131,7 @@ class Visualizer:
         self._floor_xy_half_extent: float = 10.0
         self._floor_grid_signature: tuple[float, bool] | None = None
         self._gui_handles["floor_z"].on_update(self._on_floor_z_update)
-        self._gui_handles["select_floor"].on_click(self._on_select_floor)
+        self._gui_handles["select_floor"].on_update(self._on_select_floor)
         self._gui_handles["show_floor"].on_update(self._on_show_floor_toggle)
 
         self._device_traj: deque[tuple[int, np.ndarray]] = deque(
@@ -206,10 +206,14 @@ class Visualizer:
                     "starting the run. Fed to the model as a ground plane."
                 ),
             )
-            self._gui_handles["select_floor"] = gui.add_button(
+            self._gui_handles["select_floor"] = gui.add_checkbox(
                 "Select floor",
+                initial_value=False,
                 disabled=True,
-                hint="Lock the current Floor Z as the floor for this run.",
+                hint=(
+                    "Lock the current Floor Z as the floor for this run. "
+                    "Untoggle to adjust Floor Z again with live preview."
+                ),
             )
 
             self._gui_handles["show_floor"] = gui.add_checkbox(
@@ -1057,17 +1061,22 @@ class Visualizer:
             )
 
     def _on_select_floor(self, _evt: Any) -> None:
-        """GUI callback: lock the current slider Z as the chosen floor.
+        """GUI callback: lock / unlock the floor plane at the current slider Z.
 
-        Also enables the `Show floor plane` toggle so the user can now hide the
-        locked plane (it stayed forced-visible during positioning).
+        Checked locks the current Floor Z as the chosen floor and enables the
+        `Show floor plane` toggle. Unchecking releases the lock so Floor Z can
+        be dragged again with live preview.
         """
-        z = float(self._gui_handles["floor_z"].value)
-        self._selected_floor_z = z
-        self._floor_selected = True
+        self._floor_selected = bool(self._gui_handles["select_floor"].value)
+        if self._floor_selected:
+            z = float(self._gui_handles["floor_z"].value)
+            self._selected_floor_z = z
+            self._gui_handles["show_floor"].disabled = False
+            logger.info("Floor selected at z=%.3f m", z)
+        else:
+            self._selected_floor_z = None
+            logger.info("Floor selection cleared; Floor Z is adjustable again.")
         self._render_floor_plane()
-        self._gui_handles["show_floor"].disabled = False
-        logger.info("Floor selected at z=%.3f m", z)
 
     def finalize_floor(self) -> float | None:
         """Disable the floor controls and return the selected floor height."""

@@ -1,0 +1,31 @@
+# Dependencies for the activated-venv workflow.
+projectaria-tools>=1.5.0,<3
+viser>=1.0.30,<2
+torch>=2.5,<2.7
+numpy>=1.26,<3
+scipy>=1.11,<2
+torchvision>=0.20,<0.22
+opencv-python-headless>=4.13.0.92,<5
+transformers>=4.48,<5
+setuptools<81
+smplx>=0.1.28,<1
+
+# RF-DETR + ONNX Runtime dependencies tested with Python 3.12 and CUDA 12.
+# TensorRT is installed separately (see Installation in README / scripts/install.sh)
+# because NVIDIA's wheel needs wheel_stub first and --no-build-isolation for
+# tensorrt-cu12.
+rfdetr==1.5.0
+onnx==1.22.0
+onnxsim==0.6.5
+onnx-graphsurgeon==0.6.1
+polygraphy==0.50.3
+onnxruntime-gpu==1.26.0
+# Avoid a dill.extend AttributeError on RF-DETR import.
+dill==0.3.7
+# RF-DETR imports torch.utils.tensorboard when present; pinned to the tested version.
+tensorboard==2.20.0
+
+# Development checks.
+pytest>=8,<9
+ruff>=0.6,<1
+pyright>=1.1,<2

@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lamp"
+version = "0.1.0"
+description = "Multi-view 3D human pose estimation for egocentric AR/VR recordings."
+license = { file = "LICENSE" }
+requires-python = ">=3.12"
+
+[project.scripts]
+lamp = "lamp.app.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["lamp"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "C4", "SIM", "RUF"]
+
+[tool.ruff.lint.isort]
+known-third-party = ["lamp"]
+case-sensitive = false
+order-by-type = false
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "strict"
+include = ["lamp"]
+exclude = ["**/__pycache__", ".venv"]
+reportMissingImports = "warning"
+reportMissingTypeStubs = "warning"

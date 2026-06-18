@@ -1,1 +1,37 @@
+# Virtual environments
+.venv/
+venv/
+
+# Python bytecode / cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Tool caches
+.ruff_cache/
+.pyright/
+.mypy_cache/
+.pytest_cache/
+
+# Build / packaging
+dist/
+build/
+*.egg-info/
+
+# Downloaded artifacts
+artifacts/
+ckpts/
+data/
+
+# Coverage
+.coverage
+htmlcov/
+
+# OS
 .DS_Store
+
+# IDE
+.idea/
+.vscode/
+!.vscode/settings.json
